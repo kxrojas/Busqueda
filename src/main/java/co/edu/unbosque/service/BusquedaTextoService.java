@@ -17,12 +17,12 @@ public class BusquedaTextoService {
     public String buscarTextoEnArchivo(String textoArchivo, String textoABuscar) {
         textoArchivo = textoArchivo.toLowerCase();
         textoABuscar = textoABuscar.toLowerCase();
-        bmAlgorithm.search(textoArchivo, textoABuscar); // true indica que la búsqueda es case-sensitive
+        bmAlgorithm.search(textoArchivo, textoABuscar);
         Stack<Integer> offsets = bmAlgorithm.offsets;
         StringBuilder resultadoResaltado = new StringBuilder(textoArchivo);
 
         if (offsets.isEmpty()) {
-            return null; // No se encontraron ocurrencias del texto buscado
+            return null;
         }
 
         while (!offsets.isEmpty()) {

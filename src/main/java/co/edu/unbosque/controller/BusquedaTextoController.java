@@ -40,18 +40,10 @@ public class BusquedaTextoController {
             throw new IllegalArgumentException("Uploaded file is empty");
         }
 
-        // Leer el contenido del archivo utilizando tu método existente
         String fileContent = uploadFile(file);
 
-        // Llamar al servicio para realizar la búsqueda del patrón
         String highlightedContent = busquedaTextoService.buscarTextoEnArchivo(fileContent, pattern);
         return highlightedContent;
     }
 
-    private String highlightPattern(String fileContent, String pattern, int offset) {
-        StringBuilder highlightedContent = new StringBuilder(fileContent);
-        highlightedContent.insert(offset + pattern.length(), "</span>");
-        highlightedContent.insert(offset, "<span style=\"background-color: yellow\">");
-        return highlightedContent.toString();
-    }
 }
