@@ -35,14 +35,16 @@ public class BusquedaTextoController {
 
 
     @PostMapping("/search")
-    public String searchPattern(@RequestParam("file") MultipartFile file, @RequestParam("pattern") String pattern) throws IOException {
+    public String searchPattern(@RequestParam("file") MultipartFile file,
+                                @RequestParam("pattern") String pattern,
+                                @RequestParam(value = "caseSensitive", defaultValue = "false") boolean caseSensitive) throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Uploaded file is empty");
         }
 
         String fileContent = uploadFile(file);
 
-        String highlightedContent = busquedaTextoService.buscarTextoEnArchivo(fileContent, pattern);
+        String highlightedContent = busquedaTextoService.buscarTextoEnArchivo(fileContent, pattern, caseSensitive);
         return highlightedContent;
     }
 

@@ -7,6 +7,7 @@ const BMSearchComponent = () => {
     const [uploadStatus, setUploadStatus] = useState('Upload File');
     const [fileContent, setFileContent] = useState('');
     const [highlightedContent, setHighlightedContent] = useState('');
+    const [caseSensitive, setCaseSensitive] = useState(false);
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -52,7 +53,7 @@ const BMSearchComponent = () => {
 
     const handleSearch = async () => {
         if (!file || !pattern) {
-            alert('Por favor ingresa alguna palabra, letra o simbolo para buscar.');
+            alert('Por favor ingresa alguna palabra, letra o símbolo para buscar.');
             return;
         }
         
@@ -61,6 +62,7 @@ const BMSearchComponent = () => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('pattern', pattern);
+            formData.append('caseSensitive', caseSensitive); 
 
             const searchResponse = await axios.post('http://localhost:8080/search', formData);
 
@@ -72,7 +74,7 @@ const BMSearchComponent = () => {
             }
         } catch (error) {
             console.error(error);
-            alert('Error durante la busqueda del patrón');
+            alert('Error durante la búsqueda del patrón');
         }
     };
 
@@ -99,6 +101,14 @@ const BMSearchComponent = () => {
             <button onClick={handleSearch} disabled={uploadStatus !== 'Upload Complete'}>Buscar</button>
 
             <button onClick={handleReset}>Reiniciar</button>
+            <label>
+                <input
+                    type="checkbox"
+                    checked={caseSensitive}
+                    onChange={(e) => setCaseSensitive(e.target.checked)}
+                />
+                Case Sensitive
+            </label>
 
             {fileContent && (
                 <div>
