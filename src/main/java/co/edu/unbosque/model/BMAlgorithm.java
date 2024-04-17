@@ -5,12 +5,13 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Stack;
 
-@Service
+
 public class BMAlgorithm  {
     public static final int ALPHABET_SIZE = 256;
     private int[] bmBC;
     private int[] bmGs;
     public int comparisons;
+
     public Stack<Integer> offsets;
 
     public BMAlgorithm() {

@@ -1,75 +1,46 @@
 package co.edu.unbosque.service;
 
+import co.edu.unbosque.model.BMAlgorithm;
 import org.springframework.stereotype.Service;
+
+import java.util.Stack;
 
 @Service
 public class BusquedaTextoService {
 
-    public int buscar(String palabra, String texto) {
-        int count = 0;
-        int longitudTexto = texto.length();
-        int longitudPalabra = palabra.length();
-        int[] malCaracter = heuristicaMalCaracter(palabra);
+    private BMAlgorithm bmAlgorithm;
 
-        int desplazamiento = 0;
-
-        while (desplazamiento <= (longitudTexto - longitudPalabra)) {
-            int j = longitudPalabra - 1;
-
-            while (j >= 0 && palabra.charAt(j) == texto.charAt(desplazamiento+ j))
-                j++;
-
-            if (j < 0) { // si la palabra se encuentra
-                count++;
-                desplazamiento += (desplazamiento + longitudPalabra < longitudTexto) ? longitudPalabra -
-                        malCaracter[texto.charAt(desplazamiento + longitudPalabra)] : 1;
-            } else {
-                desplazamiento += Math.max(1, j - malCaracter[texto.charAt(desplazamiento + j)]);
-            }
-        }
-        return count;
+    public BusquedaTextoService() {
+        this.bmAlgorithm = new BMAlgorithm();
     }
 
-    public String resaltarPalabra(String palabra, String texto) {
-        StringBuilder textoResaltado = new StringBuilder(texto);
-        int longitudTexto = texto.length();
-        int longitudPalabra = palabra.length();
-        int[] malCaracter = heuristicaMalCaracter(palabra);
+    public String buscarTextoEnArchivo(String textoArchivo, String textoABuscar) {
+        textoArchivo = textoArchivo.toLowerCase();
+        textoABuscar = textoABuscar.toLowerCase();
+        bmAlgorithm.search(textoArchivo, textoABuscar); // true indica que la búsqueda es case-sensitive
+        Stack<Integer> offsets = bmAlgorithm.offsets;
+        StringBuilder resultadoResaltado = new StringBuilder(textoArchivo);
 
-        int desplazamiento = 0;
-
-        while (desplazamiento <= (longitudTexto - longitudPalabra)) {
-            int j = longitudPalabra - 1;
-
-            while (j >= 0 && palabra.charAt(j) == texto.charAt(desplazamiento + j))
-                j--;
-
-            if (j < 0) {
-                for (int i = 0; i < longitudPalabra; i++) {
-                    textoResaltado.setCharAt(desplazamiento + i,
-                            Character.toUpperCase(texto.charAt(desplazamiento + i)));
-                }
-                desplazamiento += (desplazamiento + longitudPalabra < longitudTexto) ?
-                        longitudPalabra - malCaracter[texto.charAt(desplazamiento + longitudPalabra)] : 1;
-            } else {
-                desplazamiento += Math.max(1, j - malCaracter[texto.charAt(desplazamiento + j)]);
-            }
+        if (offsets.isEmpty()) {
+            return null; // No se encontraron ocurrencias del texto buscado
         }
+
+        while (!offsets.isEmpty()) {
+            int indiceEncontrado = offsets.pop();
+            resultadoResaltado = new StringBuilder(resaltarTexto(resultadoResaltado.toString(), indiceEncontrado, textoABuscar.length()));
+        }
+
+        return resultadoResaltado.toString();
+    }
+
+
+    private String resaltarTexto(String texto, int indiceEncontrado, int longitudPatron) {
+        StringBuilder textoResaltado = new StringBuilder();
+        textoResaltado.append(texto.substring(0, indiceEncontrado));
+        textoResaltado.append("<span style=\"background-color: yellow;\">");
+        textoResaltado.append(texto.substring(indiceEncontrado, indiceEncontrado + longitudPatron));
+        textoResaltado.append("</span>");
+        textoResaltado.append(texto.substring(indiceEncontrado + longitudPatron));
         return textoResaltado.toString();
-    }
-
-    private int[] heuristicaMalCaracter(String palabra) {
-        int m = palabra.length();
-         int[] malCaracter = new int[256];
-
-        for (int i = 0; i < 256; i++) {
-            malCaracter[i] = -1;
-        }
-
-        for (int i = 0; i < m; i++) {
-            malCaracter[palabra.charAt(i)] = i;
-        }
-
-        return malCaracter;
     }
 }

@@ -4,9 +4,9 @@ import axios from 'axios';
 const BMSearchComponent = () => {
     const [file, setFile] = useState(null);
     const [pattern, setPattern] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
     const [uploadStatus, setUploadStatus] = useState('Upload File');
     const [fileContent, setFileContent] = useState('');
+    const [highlightedContent, setHighlightedContent] = useState('');
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -18,7 +18,7 @@ const BMSearchComponent = () => {
 
     const handleUpload = async () => {
         if (!file) {
-            alert('Please select a file to upload');
+            alert('Por favor selecciona un archivo .txt para subir.');
             return;
         }
 
@@ -34,39 +34,41 @@ const BMSearchComponent = () => {
 
             if (uploadResponse.status === 200) {
                 setUploadStatus('Upload Complete');
-                alert('File uploaded successfully');
+                alert('Archivo cargado satisfactoriamente');
                 if (Array.isArray(uploadResponse.data)) {
                     setFileContent(uploadResponse.data.join('\n'));
                 } else {
                     setFileContent(uploadResponse.data);
                 }
+                setHighlightedContent('');
             } else {
-                alert('Failed to upload file');
+                alert('Error al cargar el archivo.');
             }
         } catch (error) {
             console.error(error);
-            alert('An error occurred during upload');
+            alert('Ocurrió un error a la hora de cargar el archivo.');
         }
     };
 
     const handleSearch = async () => {
         if (!file || !pattern) {
-            alert('Please select a file and enter a search pattern');
+            alert('Por favor ingresa alguna palabra letra o simbolo para buscar.');
             return;
         }
+        
 
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('pattern', pattern); // Agregar el patrón de búsqueda al FormData
+            formData.append('pattern', pattern);
 
             const searchResponse = await axios.post('http://localhost:8080/search', formData);
 
-            if (searchResponse.status === 200 && searchResponse.data.highlightedContent) {
-                const highlightedContent = searchResponse.data.highlightedContent;
-                setFileContent(highlightedContent);
+            if (searchResponse.status === 200 && searchResponse.data) {
+                const highlightedContent = searchResponse.data;
+                setHighlightedContent(highlightedContent);
             } else {
-                alert('Failed to perform search or search response does not contain highlighted content');
+                alert('No se ha encontrado ese patrón en el contenido del texto cargado.');
             }
         } catch (error) {
             console.error(error);
@@ -74,13 +76,17 @@ const BMSearchComponent = () => {
         }
     };
 
+    const handleReset = () => {
+        setHighlightedContent(''); // Reiniciar el contenido subrayado
+    };
+
     return (
         <div>
             <h2>Búsqueda de Patrones en Archivos</h2>
 
             <div>
-                <label htmlFor="fileInput">Archivo:</label>
-                <input type="file" id="fileInput" onChange={handleFileChange} />
+                <label htmlFor="fileInput">Archivo .txt:</label>
+                <input type="file" id="fileInput" accept=".txt" onChange={handleFileChange} />
             </div>
 
             <button onClick={handleUpload}>{uploadStatus}</button> <br />
@@ -92,20 +98,13 @@ const BMSearchComponent = () => {
 
             <button onClick={handleSearch} disabled={uploadStatus !== 'Upload Complete'}>Buscar</button>
 
+            <button onClick={handleReset}>Reiniciar</button>
+
             {fileContent && (
                 <div>
                     <h4>Contenido del archivo</h4>
-                    <pre>{fileContent}</pre>
-                </div>
-            )}
-
-            {searchResults.length > 0 && (
-                <div>
-                    <h4>Resultados de búsqueda</h4>
-                    <div>
-                        {searchResults.map((result, index) => (
-                            <div key={index}>{result}</div>
-                        ))}
+                    <div style={{ border: '1px solid #ccc', padding: '10px', overflow: 'auto', maxHeight: '300px' }}>
+                        <pre style={{ maxWidth: '100%', whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: highlightedContent || fileContent }} />
                     </div>
                 </div>
             )}
@@ -114,5 +113,3 @@ const BMSearchComponent = () => {
 };
 
 export default BMSearchComponent;
-
-

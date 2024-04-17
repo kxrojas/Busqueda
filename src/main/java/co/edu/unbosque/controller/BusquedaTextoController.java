@@ -19,7 +19,7 @@ import java.util.List;
 public class BusquedaTextoController {
 
     @Autowired
-    private BMAlgorithm bmAlgorithm;
+    private BusquedaTextoService busquedaTextoService;
 
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
@@ -35,23 +35,16 @@ public class BusquedaTextoController {
 
 
     @PostMapping("/search")
-    public String searchPattern(@RequestParam("fileContent") String fileContent, @RequestParam("pattern") String pattern) throws IOException {
-        List<Integer> offsets = new ArrayList<>();
-        BMAlgorithm bmAlgorithm = new BMAlgorithm();
-
-        // Convert pattern to char array
-        char[] patternChars = pattern.toCharArray();
-
-        // Perform search using Boyer-Moore algorithm
-        bmAlgorithm.search(fileContent, String.valueOf(patternChars));
-        offsets.addAll(bmAlgorithm.offsets);
-
-        // Highlight the pattern in the file content
-        String highlightedContent = fileContent;
-        for (Integer offset : offsets) {
-            highlightedContent = highlightPattern(highlightedContent, pattern, offset);
+    public String searchPattern(@RequestParam("file") MultipartFile file, @RequestParam("pattern") String pattern) throws IOException {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("Uploaded file is empty");
         }
 
+        // Leer el contenido del archivo utilizando tu método existente
+        String fileContent = uploadFile(file);
+
+        // Llamar al servicio para realizar la búsqueda del patrón
+        String highlightedContent = busquedaTextoService.buscarTextoEnArchivo(fileContent, pattern);
         return highlightedContent;
     }
 
