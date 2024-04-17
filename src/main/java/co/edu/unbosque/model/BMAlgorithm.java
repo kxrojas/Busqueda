@@ -1,17 +1,13 @@
 package co.edu.unbosque.model;
 
-import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
 import java.util.Stack;
-
 
 public class BMAlgorithm  {
     public static final int ALPHABET_SIZE = 256;
     private int[] bmBC;
     private int[] bmGs;
     public int comparisons;
-
     public Stack<Integer> offsets;
 
     public BMAlgorithm() {
@@ -51,7 +47,6 @@ public class BMAlgorithm  {
                 }
 
                 suff[i] = f - g;
-
             }
         }
 
@@ -84,11 +79,6 @@ public class BMAlgorithm  {
         }
     }
 
-    /**
-     * Finds the number of times a pattern is repeated in a text.
-     * @param text    The text to search
-     * @param pattern The pattern to find
-     */
     public void search(String text, String pattern) {
         char[] textLength = text.toCharArray();
         char[] patternLength = pattern.toCharArray();

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import '/src/assets/Style.css'
 
 const BMSearchComponent = () => {
     const [file, setFile] = useState(null);
@@ -8,6 +9,7 @@ const BMSearchComponent = () => {
     const [fileContent, setFileContent] = useState('');
     const [highlightedContent, setHighlightedContent] = useState('');
     const [caseSensitive, setCaseSensitive] = useState(false);
+    const [occurrenceCount, setOccurrenceCount] = useState(null);
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -56,7 +58,6 @@ const BMSearchComponent = () => {
             alert('Por favor ingresa alguna palabra, letra o símbolo para buscar.');
             return;
         }
-        
 
         try {
             const formData = new FormData();
@@ -67,8 +68,11 @@ const BMSearchComponent = () => {
             const searchResponse = await axios.post('http://localhost:8080/search', formData);
 
             if (searchResponse.status === 200 && searchResponse.data) {
-                const highlightedContent = searchResponse.data;
+                const responseParts = searchResponse.data.split(':::');
+                const highlightedContent = responseParts[0];
+                const count = parseInt(responseParts[1]);
                 setHighlightedContent(highlightedContent);
+                setOccurrenceCount(count);
             } else {
                 alert('No se ha encontrado ese patrón en el contenido del texto cargado.');
             }
@@ -87,20 +91,20 @@ const BMSearchComponent = () => {
             <h2>Búsqueda de Patrones en Archivos</h2>
 
             <div>
-                <label htmlFor="fileInput">Archivo .txt:</label>
+                <label htmlFor="fileInput">Archivo .txt: </label>
                 <input type="file" id="fileInput" accept=".txt" onChange={handleFileChange} />
             </div>
-
+            <br></br>
             <button onClick={handleUpload}>{uploadStatus}</button> <br />
-
+            <br></br><br></br>
             <div>
-                <label htmlFor="patternInput">Patrón de búsqueda:</label>
+                <label htmlFor="patternInput">Patrón de búsqueda: </label>
                 <input type="text" id="patternInput" value={pattern} onChange={handlePatternChange} />
             </div>
+            <br></br>
+            <button onClick={handleSearch} disabled={uploadStatus !== 'Upload Complete'} className={'boton1'}>Buscar</button>
 
-            <button onClick={handleSearch} disabled={uploadStatus !== 'Upload Complete'}>Buscar</button>
-
-            <button onClick={handleReset}>Reiniciar</button>
+            <button onClick={handleReset} className={'boton1'}>Reiniciar</button>
             <label>
                 <input
                     type="checkbox"
@@ -116,6 +120,11 @@ const BMSearchComponent = () => {
                     <div style={{ border: '1px solid #ccc', padding: '10px', overflow: 'auto', maxHeight: '300px' }}>
                         <pre style={{ maxWidth: '100%', whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: highlightedContent || fileContent }} />
                     </div>
+                    {occurrenceCount !== null && (
+                        <div>
+                            <p>La palabra buscada aparece {occurrenceCount === 1 ? '1 vez' : `${occurrenceCount} veces`}</p>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

@@ -2,7 +2,6 @@ package co.edu.unbosque.service;
 
 import co.edu.unbosque.model.BMAlgorithm;
 import org.springframework.stereotype.Service;
-
 import java.util.Stack;
 
 @Service
@@ -28,14 +27,16 @@ public class BusquedaTextoService {
             return null;
         }
 
+        int count = 0; // Contador de ocurrencias
         while (!offsets.isEmpty()) {
             int indiceEncontrado = offsets.pop();
             resultadoResaltado = new StringBuilder(resaltarTexto(resultadoResaltado.toString(), indiceEncontrado, textoABuscar.length()));
+            count++; // Incrementa el contador de ocurrencias por cada ocurrencia encontrada
         }
 
-        return resultadoResaltado.toString();
+        // Retorna un objeto que contiene tanto el texto resaltado como el recuento de ocurrencias
+        return resultadoResaltado.toString() + ":::" + count;
     }
-
 
     private String resaltarTexto(String texto, int indiceEncontrado, int longitudPatron) {
         StringBuilder textoResaltado = new StringBuilder();
