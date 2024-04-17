@@ -15,8 +15,8 @@ public class BusquedaTextoService {
     }
 
     public String buscarTextoEnArchivo(String textoArchivo, String textoABuscar) {
-        textoArchivo = textoArchivo.toLowerCase();
-        textoABuscar = textoABuscar.toLowerCase();
+        /*textoArchivo = textoArchivo.toLowerCase();
+        textoABuscar = textoABuscar.toLowerCase();*/
         bmAlgorithm.search(textoArchivo, textoABuscar);
         Stack<Integer> offsets = bmAlgorithm.offsets;
         StringBuilder resultadoResaltado = new StringBuilder(textoArchivo);

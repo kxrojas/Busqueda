@@ -52,7 +52,7 @@ const BMSearchComponent = () => {
 
     const handleSearch = async () => {
         if (!file || !pattern) {
-            alert('Por favor ingresa alguna palabra letra o simbolo para buscar.');
+            alert('Por favor ingresa alguna palabra, letra o simbolo para buscar.');
             return;
         }
         
@@ -72,12 +72,12 @@ const BMSearchComponent = () => {
             }
         } catch (error) {
             console.error(error);
-            alert('An error occurred during search');
+            alert('Error durante la busqueda del patrón');
         }
     };
 
     const handleReset = () => {
-        setHighlightedContent(''); // Reiniciar el contenido subrayado
+        setHighlightedContent(''); 
     };
 
     return (
