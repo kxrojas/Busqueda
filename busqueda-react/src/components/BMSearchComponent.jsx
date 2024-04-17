@@ -84,31 +84,56 @@ const BMSearchComponent = () => {
 
     return (
         <div>
-            <h2>Búsqueda de Patrones en Archivos</h2>
-
-            <div>
-                <label htmlFor="fileInput">Archivo .txt:</label>
-                <input type="file" id="fileInput" accept=".txt" onChange={handleFileChange} />
+            <h2>Búsqueda de Patrones en Archivos</h2><br />
+            <div class="container text-center py-2">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <label class="input-group-text" htmlFor="patternInput">Upload</label>
+                            <input type="file" class="form-control" id="fileInput" accept=".txt" onChange={handleFileChange} />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col py-3">
+                        <button onClick={handleUpload}>{uploadStatus}</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">Patrón de búsqueda</span>
+                            <input type="text" class="form-control" placeholder="Buscar" aria-label="Username" aria-describedby="basic-addon1" id="patternInput" value={pattern} onChange={handlePatternChange}/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="d-grid gap-3 col-6 mx-auto">
+                            <button onClick={handleSearch} disabled={uploadStatus !== 'Upload Complete'}>Buscar</button>
+                            <button onClick={handleReset}>Reiniciar</button>
+                            <div class="form-check form-switch">
+                                <label class="form-check-label" for="flexSwitchCheckDefault">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        role="switch"
+                                        id="flexSwitchCheckDefault"
+                                        checked={caseSensitive}
+                                        onChange={(e) => setCaseSensitive(e.target.checked)}
+                                    />
+                                    Case Sensitive
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                    
+                    </div>
+                </div>
             </div>
-
-            <button onClick={handleUpload}>{uploadStatus}</button> <br />
-
-            <div>
-                <label htmlFor="patternInput">Patrón de búsqueda:</label>
-                <input type="text" id="patternInput" value={pattern} onChange={handlePatternChange} />
-            </div>
-
-            <button onClick={handleSearch} disabled={uploadStatus !== 'Upload Complete'}>Buscar</button>
-
-            <button onClick={handleReset}>Reiniciar</button>
-            <label>
-                <input
-                    type="checkbox"
-                    checked={caseSensitive}
-                    onChange={(e) => setCaseSensitive(e.target.checked)}
-                />
-                Case Sensitive
-            </label>
 
             {fileContent && (
                 <div>
@@ -116,6 +141,11 @@ const BMSearchComponent = () => {
                     <div style={{ border: '1px solid #ccc', padding: '10px', overflow: 'auto', maxHeight: '300px' }}>
                         <pre style={{ maxWidth: '100%', whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: highlightedContent || fileContent }} />
                     </div>
+                    {occurrenceCount !== null && (
+                        <div>
+                            <p>La palabra buscada aparece {occurrenceCount === 1 ? '1 vez' : `${occurrenceCount} veces`}</p>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
