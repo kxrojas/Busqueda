@@ -27,11 +27,11 @@ public class BusquedaTextoService {
             return null;
         }
 
-        int count = 0; // Contador de ocurrencias
+        int count = 0;
         while (!offsets.isEmpty()) {
             int indiceEncontrado = offsets.pop();
             resultadoResaltado = new StringBuilder(resaltarTexto(resultadoResaltado.toString(), indiceEncontrado, textoABuscar.length()));
-            count++; // Incrementa el contador de ocurrencias por cada ocurrencia encontrada
+            count++;
         }
 
         // Retorna un objeto que contiene tanto el texto resaltado como el recuento de ocurrencias
